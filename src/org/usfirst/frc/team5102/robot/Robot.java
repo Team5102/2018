@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5102.robot;
 
+import org.usfirst.frc.team5102.robot.util.DriverStation;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,7 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends IterativeRobot {
+public class Robot extends IterativeRobot
+{
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
 	String autoSelected;
@@ -21,11 +24,17 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
+	
+	DriverStation driverStation;
+	
 	@Override
-	public void robotInit() {
+	public void robotInit()
+	{
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+		
+		driverStation = new DriverStation();
 	}
 
 	/**
