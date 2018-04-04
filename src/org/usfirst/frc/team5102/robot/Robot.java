@@ -1,89 +1,126 @@
 package org.usfirst.frc.team5102.robot;
 
-import org.usfirst.frc.team5102.robot.util.DriverStation;
+import org.usfirst.frc.team5102.robot.util.DriverStation_5102;
+import org.usfirst.frc.team5102.robot.util.DriverStation_5102.RobotMode;
+import org.usfirst.frc.team5102.robot.util.DriverStation_5102.Side;
+import org.usfirst.frc.team5102.robot.util.Vision;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Robot extends IterativeRobot
 {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
-	String autoSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
-
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
+	DriverStation_5102 driverStation;
 	
-	DriverStation driverStation;
+	Drive drive;
+	Grabber grabber;
+	Elevator elevator;
+	Climber climber;
+	
+	Autonomous auton;
 	
 	@Override
 	public void robotInit()
 	{
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
-		SmartDashboard.putData("Auto choices", chooser);
+		System.out.println("Initializing robot...");
 		
-		driverStation = new DriverStation();
+		driverStation = new DriverStation_5102();
+		drive = new Drive();
+		grabber = new Grabber();
+		elevator = new Elevator();
+		climber = new Climber();
+		
+		auton = new Autonomous(this);
+		
+		//CameraServer.getInstance().startAutomaticCapture();
+		
+		NetworkTableInstance.getDefault()
+	    .getEntry("/CameraPublisher/limelightStream/streams")
+	    .setStringArray(new String[]{"mjpg:http://limelight.local:5800/?action=stream"});
+		
+		Vision.init();				//Initialize networktable for vision
+		Vision.setLEDs(false);		//Turn off vision LEDs
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
 	@Override
-	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
-	}
-
-	/**
-	 * This function is called periodically during autonomous
-	 */
-	@Override
-	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
+	public void autonomousInit()
+	{		
+		Vision.setLEDs(true);		//Turn on vision LEDs
+		
+		driverStation.setMode(RobotMode.auton);
+		
+		if(driverStation.getSwitch() == Side.left)
+		{
+			System.out.println("Switch:   Left");
 		}
+		else
+		{
+			System.out.println("Switch:   Right");
+		}
+		if(driverStation.getScale() == Side.left)
+		{
+			System.out.println("Scale:    Left");
+		}
+		else
+		{
+			System.out.println("Scale:    Right");
+		}
+		
+		auton.runAuto();		//Start running autonomous procedure
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
 	@Override
-	public void teleopPeriodic() {
+	public void autonomousPeriodic()
+	{
+		driverStation.updateDS();
+		
+		DriverStation_5102.setAirPressure(grabber.getWorkingPSI());
+	}
+	
+	@Override
+	public void teleopInit()
+	{
+		Vision.setLEDs(false);
+		
+		grabber.setGrabberState(true);
+		
+		drive.drivePID.disable();
+		
+		driverStation.setMode(RobotMode.teleop);
 	}
 
-	/**
-	 * This function is called periodically during test mode
-	 */
+	@Override
+	public void teleopPeriodic()
+	{
+		driverStation.updateDS();
+		
+		drive.teleop();
+		grabber.teleop();
+		elevator.teleop();
+		climber.teleop();
+	}
+
 	@Override
 	public void testPeriodic() {
+	}
+	
+	@Override
+	public void disabledInit()
+	{		
+		Vision.setLEDs(false);
+		driverStation.setMode(RobotMode.disabled);
+	}
+	
+	@Override
+	public void disabledPeriodic()
+	{
+		driverStation.setConnected();
+		driverStation.updateAlliance();
+		
+		DriverStation_5102.setAirPressure(grabber.getWorkingPSI());
+		
+		driverStation.updateDS();
 	}
 }
 
