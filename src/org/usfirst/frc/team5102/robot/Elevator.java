@@ -23,7 +23,7 @@ public class Elevator implements PIDOutput, PIDSource
 	public static DigitalInput lowerLimit, upperLimit;
 	
 	PWM heightLEDs;
-	
+
 	public Elevator()
 	{
 		System.out.println("Initializing elevator...");
@@ -151,7 +151,18 @@ public class Elevator implements PIDOutput, PIDSource
 	public void pidWrite(double output)
 	{
 		System.out.println("pidwrite: " + output);
-		
+
+//		// The following could be used --Charlie
+//		if( (lowerLimit.get() && output < 0) ||
+//			(upperLimit.get() && output > 0))
+//		{
+//			String limitOutput = (lowerLimit.get()) ? "lower" : "upper";
+//			System.out.println(limitOutput + " limit triggered");
+//			output = 0;
+//		}
+//		elevatorMotor1.set(output);
+
+
 		if(lowerLimit.get())
 		{
 			System.out.println("lower limit triggered");

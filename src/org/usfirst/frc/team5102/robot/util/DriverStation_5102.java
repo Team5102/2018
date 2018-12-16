@@ -6,6 +6,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * TODO:
+ * 	* Rename the class to remove '_'.
+ *
+ * FORM:
+ *  * It's generally better form to have things that are constants (like enums) be all caps.
+ * 	  e.g. AUTON as opposed to auton
+ */
 public class DriverStation_5102
 {
 	
@@ -92,12 +100,26 @@ public class DriverStation_5102
 			enc.setValuePercent(75);
 		}
 	}
-	
+
+	/**
+	 * 	TODO:
+	 * 		* Documentation.
+	 * 		- Good practice.
+	 * 		* Replace block evaluating 'number' with a switch and cases.
+	 * @param meter
+	 * @param number
+	 * @param mode
+	 */
 	public void setInfoStrip(int meter, double number, InfoStripMode mode)
 	{
 		if(mode == InfoStripMode.airPressure)
 		{
-			
+//			Charlie: The below could be replaced by something like
+//			int i, start;
+//			for(i = 10, start = 54; number > 0 && number > start; i--)
+//				start -= 6;
+//			number = i;
+//
 			if(number > 54)
 	    	{
 	    		number = 10;
@@ -139,8 +161,25 @@ public class DriverStation_5102
 	    		number = 1;
 	    	}
 		}
-	
-		
+
+//		Something like this could replace the below -- Charlie
+//		boolean pin1, pin2, pin3, pin4;
+//		switch((int) number) // <- Casting for a switch is gross and bad.
+//		{
+//			case 0:
+//				pin1 = pin2 = pin3 = false;
+//			break;
+//
+//			case 1:
+//				pin1 = pin2 = pin3 = false;
+//				pin4 = true;
+//			break;
+//		}
+//		setCommPins(meter, pin1, pin2, pin3, pin4);
+
+
+
+
 		if(number == 0)
     	{
     		setCommPins(meter,false,false,false,false);
@@ -241,16 +280,36 @@ public class DriverStation_5102
 			return Side.right;
 		}
 	}
-	
+
+	/**
+	 * 	TODO:
+	 * 		* Again, take an argument for the character.
+	 * 		- This would remove the need for a STringIndexOutOfBoundsException.
+	 *  FORM:
+	 *  	* Try to reduce the number of possible returns made by a function.
+	 * 		- Helps for debugging, if you have a single point that's routed through/reached.
+	 * 		- If you can't reduce the number of returns, it might be an indication that your
+	 * 		  function is doing too much, and ought to be broken up.
+	 *
+	 * @return
+	 * @throws StringIndexOutOfBoundsException
+	 */
 	public Side getScale() throws StringIndexOutOfBoundsException
 	{
 		String data = DriverStation.getInstance().getGameSpecificMessage();
-		
+
+
 		if(data.length() == 0)
 		{
 			return Side.neither;
 		}
-		
+
+//		The below could be replaced by something like --Charlie
+//		return (String.valueOf(data.charAt(1)).equalsIgnoreCase("L"))
+//				? Side.left : Side.right;
+//		// Ternary is preferable when you're just returning something based on an if/else.
+//		// I also prefer to use string equality methods where possible.
+
 		if(data.charAt(1) == 'L')
 		{
 			return Side.left;

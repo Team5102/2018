@@ -28,6 +28,9 @@ static NetworkTable target;
 	
 	public static boolean targetFound()
 	{
+		// This could replace the below. --Charlie
+//		return (target.getDouble("tv", 0) == 1);
+
 		if(target.getDouble("tv", 0) == 1)
 		{
 			return true;
@@ -40,6 +43,9 @@ static NetworkTable target;
 	
 	public static void setLEDs(boolean state)
 	{
+//		// This could replace the below. --Charlie.
+//		target.putDouble("ledMode", (state) ? 0 : 1);
+
 		if(state)
 		{
 			target.putDouble("ledMode", 0);

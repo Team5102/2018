@@ -5,6 +5,10 @@ import org.usfirst.frc.team5102.robot.util.Vision;
 import org.usfirst.frc.team5102.robot.util.DriverStation_5102.Side;
 import org.usfirst.frc.team5102.robot.util.TurnPID.InputDevice;
 
+/**
+ *  TODO:
+ *      * Move methods specific to a particular autonomous mode to their own class.
+ */
 public class Autonomous
 {
 	Robot robot;
@@ -13,7 +17,19 @@ public class Autonomous
 	{
 		this.robot = robot;
 	}
-	
+
+    /**
+     * TODO:
+     *     * Replace string literals like 'No Auton' with constantly defined vars, or enums.
+     *      - It reduces the likelihood of messing up typing, allows you to quickly change prompts elsewhere, and
+     *        disassociates things like user-facing text from function.
+     *
+     *     * Remove the static reference to DriverStation_5102. Have the method take a parameter for a mode.
+     *      - It's generally better form to have a function be 'pure'. It removes erroneous behavior that may arise
+     *        from the module.
+     *      - It also makes it easier to write tests for.
+     *        And things like state tests are possible without a running robot.
+     */
 	public void runAuto()
 	{
 		

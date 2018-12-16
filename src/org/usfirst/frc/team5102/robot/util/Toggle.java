@@ -12,6 +12,13 @@ public class Toggle
 	
 	public boolean toggle(boolean buttonPressed)
 	{
+
+//		// The below should as a replacement. -- Charlie
+//		pressed = (buttonPressed && !pressed);
+//		if(pressed)
+//			running = !running;
+//		return running;
+
 		if(buttonPressed)
 		{
 			if(!pressed)

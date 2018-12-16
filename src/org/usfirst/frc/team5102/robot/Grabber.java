@@ -25,7 +25,12 @@ public class Grabber
 	DecimalFormat df;
 	
 	static Toggle grabberToggle, tiltToggle;
-	
+
+	/**
+	 *  TODO:
+	 *  	* This constructor should probably be public.
+	 *  	* 'df' should be moved to local method it's singly used in.
+	 */
 	Grabber()
 	{
 		grabber = new Solenoid(RobotMap.grabberSolenoid);
@@ -43,7 +48,10 @@ public class Grabber
 	public void teleop()
 	{
 		DriverStation_5102.setAirPressure(getWorkingPSI());
-		
+
+		// This could replace the below --Charlie.
+		grabber.set( (grabberToggle.toggle(DriverStation_5102.secondaryController.getButtonA())) );
+
 		if(grabberToggle.toggle(DriverStation_5102.secondaryController.getButtonA()))
 		{
 			grabber.set(true);
@@ -52,7 +60,10 @@ public class Grabber
 		{
 			grabber.set(false);
 		}
-		
+
+//		// This could replace the below. --Charlie
+//		tilt.set(Elevator.elevatorPot.get() > 0.15 );
+
 		if(Elevator.elevatorPot.get() > 0.15)
 		{
 			tilt.set(true);
@@ -68,6 +79,7 @@ public class Grabber
 		}
 		else if(DriverStation_5102.secondaryController.getRightTriggerAxis() > .5)
 		{
+			// Isn't this conditional redundant? --Charlie
 			if(tilt.get())
 			{
 				intakeMotor.set(0.6);
